@@ -46,6 +46,5 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: 'knkdemoapp00'
-        slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_aee002eb23224409aebfae3a75718192 }}
         images: 'knk00.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_5c5cf07b951043a0b9835e39da2b6ed2 }}/nestjs:${{ github.sha }}'
