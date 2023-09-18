@@ -34,7 +34,7 @@ jobs:
         file: ./Dockerfile
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: 'ubuntu-latest'
     needs: build
     environment:
       name: 'production'
@@ -46,6 +46,5 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: 'knkdemo00'
-        slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_12fe9e36e12b40d6a0ce2c6cb4cd983b }}
         images: 'knk00.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_08dc6b1033da4285a419b23266a988c9 }}/api-knk:${{ github.sha }}'
