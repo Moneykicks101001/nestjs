@@ -23,14 +23,14 @@ jobs:
       uses: docker/login-action@v2
       with:
         registry: https://knkregistry1010.azurecr.io/
-        username: ${{ secrets.AzureAppService_ContainerUsername_df657473aa3d4f21b1f79ff63bde4cbf }}
-        password: ${{ secrets.AzureAppService_ContainerPassword_b733f13d079249cdb2633e74fe86656b }}
+        username: ${{ secrets.AzureAppService_ContainerUsername_efb3b36927734ff89392f634b8c0ea3c }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_18d9d1f797d943eb9dc33542fea3c0da }}
 
     - name: Build and push container image to registry
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: knkregistry1010.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_df657473aa3d4f21b1f79ff63bde4cbf }}/nestjs:${{ github.sha }}
+        tags: knkregistry1010.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_efb3b36927734ff89392f634b8c0ea3c }}/nestjs:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
@@ -47,5 +47,5 @@ jobs:
       with:
         app-name: 'BE-API00'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_3399ed3c140b4a19a647f700967e262f }}
-        images: 'knkregistry1010.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_df657473aa3d4f21b1f79ff63bde4cbf }}/nestjs:${{ github.sha }}'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_17fea6d087b142d8b2a8849686700690 }}
+        images: 'knkregistry1010.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_efb3b36927734ff89392f634b8c0ea3c }}/nestjs:${{ github.sha }}'
