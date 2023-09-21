@@ -22,7 +22,7 @@ jobs:
 
       strategy:
         matrix:
-          node-version: [10.x, 12.x, 14.x]
+          node-version: [16.x, 12.x, 14.x]
 
       steps:
       - uses: actions/checkout@v3
@@ -35,7 +35,6 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: checkout code
         uses: actions/checkout@v3
