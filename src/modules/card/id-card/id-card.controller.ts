@@ -25,8 +25,8 @@ import {
 import { ObjectId } from 'mongodb';
 import { ClsService } from 'nestjs-cls';
 import { IDCard } from '../entity/child-entity/idCard.entity';
-import { IDCardService } from './idCard.service';
 import { SaveIDCardDto, SyncIDCardDto } from '../dto/id-card.dto';
+import { IDCardService } from './id-card.service';
 
 @Controller('profile/:profileId/card/id-card')
 @ApiTags('ID Card')
@@ -125,7 +125,7 @@ export class IDCardController {
     example: '65016e6f5622844ace07e5a2',
   })
   @ApiResponseObject(IDCard)
-  async updateHospitalization(
+  async updateIDCard(
     @Param('id', ParseObjectIdPipe) id: ObjectId,
     @Body() payload: SaveIDCardDto,
   ) {

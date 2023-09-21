@@ -14,6 +14,7 @@ import { UploadModule } from '@shared/upload';
 import { FileModule } from '@modules/file';
 import { ProfileModule } from '@modules/profile';
 import { CardModule } from '@modules/card';
+import { TopicModule } from '@modules/topic';
 @Module({
   imports: [
     UserModule,
@@ -29,6 +30,7 @@ import { CardModule } from '@modules/card';
     UploadModule,
     FileModule,
     CardModule,
+    TopicModule,
   ],
   providers: [AuditSubscriber],
 })

@@ -1,14 +1,20 @@
 import { LogService } from '@log';
+import { CardService } from '@modules/card';
 import { FileService } from '@modules/file';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from '@shared/base';
 import { PageRequest, PageRequestSync, Pageable } from '@types';
-import { formatUrlBucket } from '@utils';
 import { ObjectId } from 'mongodb';
 import { FilterOperators, FindManyOptions, MongoRepository } from 'typeorm';
 import { SaveProfileDto, SyncProfileDto } from './dto/profile.dto';
 import { Profile } from './entity/profile.entity';
+import { User } from '@modules/user';
+import { TopicService } from '@modules/topic';
 
 @Injectable()
 export class ProfileService extends BaseService<Profile> {
@@ -16,6 +22,8 @@ export class ProfileService extends BaseService<Profile> {
     @InjectRepository(Profile)
     private readonly profileRepository: MongoRepository<Profile>,
     private readonly fileService: FileService,
+    private readonly cardService: CardService,
+    private readonly topicService: TopicService,
     private readonly log: LogService,
   ) {
     super(profileRepository, Profile.name);
@@ -55,7 +63,7 @@ export class ProfileService extends BaseService<Profile> {
     return new Pageable(profilesSyncDto, { size, page, count });
   }
 
-  async getOne(id: ObjectId) {
+  async findProfileWithOutDeletedTimeNull(id: ObjectId) {
     const profile = await this.findOne({
       where: {
         _id: id,
@@ -68,8 +76,21 @@ export class ProfileService extends BaseService<Profile> {
   }
 
   async saveProfile(payload: SaveProfileDto, id?: ObjectId): Promise<Profile> {
-    let profile = id ? await this.getOne(id) : null;
-    if (!profile) {
+    let profile: Profile;
+    if (id) {
+      profile = await this.findProfileWithOutDeletedTimeNull(id);
+      delete payload._id;
+    } else {
+      if (payload?._id) {
+        const existProfile = await this.findOne({
+          where: {
+            _id: payload._id,
+            deletedTime: null,
+          },
+        });
+        if (existProfile)
+          throw new ConflictException(`Profile ${payload._id} already exist`);
+      }
       profile = this.create(payload);
     }
     payload.emergencyContacts?.map((emergencyContact) => {
@@ -82,13 +103,21 @@ export class ProfileService extends BaseService<Profile> {
   }
 
   async changeAvatar(id: ObjectId, file: Express.Multer.File) {
-    const profile = await this.getOne(id);
+    const profile = await this.findProfileWithOutDeletedTimeNull(id);
     const avatar = await this.fileService.upload(file, null, profile._id, true);
-    profile.avatar = avatar.path;
+    profile.avatar = avatar.url;
     await this.save(profile);
     return {
-      url: formatUrlBucket(avatar.path),
+      url: avatar.url,
       fileName: avatar.name,
     };
+  }
+
+  async softDeleteProfile(user: User, id: ObjectId) {
+    await this.softDelete(id);
+    await Promise.all([
+      this.cardService.softDeleteCardOfProfile(user?._id, id),
+      this.topicService.softDeleteTopicOfProfile(user?._id, id),
+    ]);
   }
 }

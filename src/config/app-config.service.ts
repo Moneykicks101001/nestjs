@@ -77,6 +77,7 @@ export class AppConfigService {
     return {
       bucketName: this.configService.get<string>('GOOGLE_BUCKET_NAME'),
       bucketPrefix: this.configService.get<string>('GOOGLE_BUCKET_PREFIX'),
+      clientId: this.configService.get<string>('GOOGLE_CLIENT_ID').split(COMMA),
     };
   }
 
@@ -88,5 +89,27 @@ export class AppConfigService {
 
   port() {
     return this.configService.get<number>('PORT');
+  }
+
+  azure() {
+    return {
+      storage: {
+        connectionString: this.configService.get<string>(
+          'AZURE_STORAGE_CONNECTION_STRING',
+        ),
+        containerName: this.configService.get<string>(
+          'AZURE_STORAGE_CONTAINER_NAME',
+        ),
+        sasExpiredDay: this.configService.get<number>(
+          'AZURE_STORAGE_SAS_EXPIRED_DAY',
+        ),
+      },
+    };
+  }
+
+  apple() {
+    return {
+      clientId: this.configService.get<string>('APPLE_CLIENT_ID').split(COMMA),
+    };
   }
 }

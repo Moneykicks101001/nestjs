@@ -1,7 +1,7 @@
 import { AppConfigModule, AppConfigService, swaggerConfig } from '@config';
 import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import helmet from 'helmet';
+import { useContainer } from 'class-validator';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { AppModule } from './app.module';
 
@@ -12,6 +12,9 @@ async function bootstrap() {
   const logger = app.get(WINSTON_MODULE_NEST_PROVIDER);
   app.useLogger(logger);
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
+  useContainer(app.select(AppModule), {
+    fallbackOnErrors: true,
+  });
 
   // app.use(helmet());
 

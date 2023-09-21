@@ -1,5 +1,5 @@
 import { ProfileModule } from '@modules/profile';
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AllergyController } from './allergy/allergy.controller';
 import { AllergyService } from './allergy/allergy.service';
@@ -34,15 +34,18 @@ import { QuestionController } from './question/question.controller';
 import { ProcedureController } from './procedure/procedure.controller';
 import { VaccinationController } from './vaccination/vaccination.controller';
 import { IDCard } from './entity/child-entity/idCard.entity';
-import { IDCardController } from './id-card/idCard.controller';
-import { IDCardService } from './id-card/idCard.service';
 import { VaccinationService } from './vaccination/vaccination.service';
 import { ProcedureService } from './procedure/procedure.service';
 import { QuestionService } from './question/question.service';
+import { IDCardController } from './id-card/id-card.controller';
+import { IDCardService } from './id-card/id-card.service';
+import { Card } from './entity/card.entity';
+import { CardService } from './card.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
+      Card,
       Note,
       Allergy,
       Practitioner,
@@ -56,8 +59,8 @@ import { QuestionService } from './question/question.service';
       Medication,
       IDCard,
     ]),
-    ProfileModule,
     FileModule,
+    forwardRef(() => ProfileModule),
   ],
   controllers: [
     CardController,
@@ -75,6 +78,7 @@ import { QuestionService } from './question/question.service';
     IDCardController,
   ],
   providers: [
+    CardService,
     NoteService,
     AllergyService,
     PractitionerService,
@@ -88,5 +92,6 @@ import { QuestionService } from './question/question.service';
     ProcedureService,
     QuestionService,
   ],
+  exports: [CardService],
 })
 export class CardModule {}
