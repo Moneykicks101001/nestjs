@@ -1,7 +1,7 @@
 name: Build and deploy a container to an Azure Web App
 
 env:
-  AZURE_WEBAPP_NAME: api-knk
+  AZURE_WEBAPP_NAME: BE-API00
   # GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCE_SA_KEY }}
 
 on:
@@ -54,8 +54,8 @@ jobs:
 
       - name: Build the BE image and push it to ACR
         run: |
-          docker build . -t knkregis.azurecr.io/api-knk:${{ github.sha }}
-          docker push knkregis.azurecr.io/api-knk:${{ github.sha }}
+          docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/api-knk:${{ github.sha }}
+          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/api-knk:${{ github.sha }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -70,5 +70,4 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: 'knkregis.azurecr.io/api-knk:${{ github.sha }}'
-          
+          images: '${{ secrets.REGISTRY_LOGIN_SERVER }}/api-knk:${{ github.sha }}'
